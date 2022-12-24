@@ -1,0 +1,6 @@
+.header {
+    background-color: #FF8C8C;
+    color: white;
+    display: flex;
+    justify-content: center;
+}
