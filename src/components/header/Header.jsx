@@ -13,9 +13,11 @@ import {DateRange} from 'react-date-range';
 import {useState} from 'react';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
-import { format } from "date-fns"
-const Header = ({ type }) => {
-    const [openDate, setOpenDate] = useState(false)
+import {format} from "date-fns"
+import {useNavigate} from 'react-router-dom';
+const Header = ({type}) => {
+    const [destination, setDestination] = useState(false);
+    const [openDate, setOpenDate] = useState(false);
     const [date, setDate] = useState([
         {
             startDate: new Date(),
@@ -23,8 +25,11 @@ const Header = ({ type }) => {
             key: 'selection'
         }
     ]);
+
     const [openOptions, setOpenOptions] = useState(false);
     const [options, setOptions] = useState({adult: 1, children: 0, room: 1});
+
+    const navigate = useNavigate()
 
     const handleOption = (name, operation) => {
         setOptions((prev) => {
@@ -37,9 +42,16 @@ const Header = ({ type }) => {
         });
     };
 
+    const handleSearch = () => {
+        navigate("/hotels", { state: { destination, date, options }});
+    }
+
     return (
         <div className="header">
-            <div className={type === "list" ? "headerContainer listMode" : "headerContainer"}>
+            <div
+                className={type === "list"
+                    ? "headerContainer listMode"
+                    : "headerContainer"}>
                 <div className="headerList">
                     <div className="headerListItem active">
                         <FontAwesomeIcon icon={faBed}/>
@@ -63,12 +75,12 @@ const Header = ({ type }) => {
                     </div>
                 </div>
                 {
-                    type !== "list" && <> <h1 className = "headerTitle" > 평생 할인 혜택을 받으세요 !</h1>
+                    type !== "list" && <> < h1 className = "headerTitle" > 평생 할인 혜택을 받으세요 !</h1>
                 <p className="headerDesc">
                     무료 realtour 계정으로 10 % 이상의 즉시 할인을 받으세요.</p>
                 <button className="headerBtn">로그인 / 회원가입</button> < div className = "headerSearch" > <div className="headerSearchItem">
                             <FontAwesomeIcon icon={faBed} className="headerIcon"/>
-                            <input type="text" placeholder="어디 가세요?" className="headerSearchInput"/>
+                            <input type="text" placeholder="어디 가세요?" className="headerSearchInput" onChange={e => setDestination(e.target.value)}/>
                         </div>
                         <div className="headerSearchItem">
                             <FontAwesomeIcon icon={faCalendarDays} className="headerIcon"/>
@@ -86,7 +98,9 @@ const Header = ({ type }) => {
                                         onChange={item => setDate([item.selection])}
                                         moveRangeOnFirstSelection={false}
                                         ranges={date}
-                                        className="date"/>
+                                        className="date"
+                                        minDate={new Date()}
+                                    />
                             }
                         </div>
                         <div className="headerSearchItem">
@@ -147,7 +161,7 @@ const Header = ({ type }) => {
                             }
                         </div>
                         <div className="headerSearchItem">
-                            <button className="headerBtn">검색</button>
+                            <button className="headerBtn" onClick={handleSearch}>검색</button>
                         </div>
                     </div>
                 </>
